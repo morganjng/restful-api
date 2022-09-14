@@ -24,9 +24,9 @@ def last_heartrate():
         url_prefix + "/1/user/-/activities/heart/date/today/1d/1min.json",
         headers=myheaders,
     ).json()["activities-heart-intraday"]["dataset"]
-    for i in range(len(json_request)):
-        if json_request[0 - i - 1]["value"] != 0:
-            ret = {"heart-rate": json_request[0 - i - 1]["value"], "time offset":  datetime.utcnow()-json_request[0-i-1]["time"])}
+    ret = {}
+    #print(datetime.timedelta(100))
+    ret = {"heart-rate": json_request[- 1]["value"], "time offset":  (datetime.datetime.utcnow()-datetime.datetime.strptime(json_request[-1]["time"], "%H:%M:%S")).seconds/60}
     return jsonify(ret)
 
 
@@ -50,15 +50,15 @@ def last_steps():
     #         }
     summary = requests.get(
         url_prefix + "/1/user/-/activities/date/today.json", headers=myheaders
-    ).json()["summary"]
+    ).json()
     distance = 0
-    for dict in summary["distances"]:
+    for dict in summary["summary"][ "distances"]:
         if dict["activity"] == "total":
             distance = dict["distance"]
     ret = {
-        "steps": summary["steps"],
+        "steps": summary["summary"]["steps"],
         "distance": distance,
-        "offset": datetime.utcnow()-summary["time"],
+        "offset": 0,
     }
     return jsonify(ret)
 
