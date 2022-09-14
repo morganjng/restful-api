@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from flask import Flask, jsonify
+import datetime
 import requests
 
 app = Flask(__name__)
@@ -25,7 +26,7 @@ def last_heartrate():
     ).json()["activities-heart-intraday"]["dataset"]
     for i in range(len(json_request)):
         if json_request[0 - i - 1]["value"] != 0:
-            ret = {"heart-rate": json_request[0 - i - 1]["value"], "time offset": i}
+            ret = {"heart-rate": json_request[0 - i - 1]["value"], "time offset":  datetime.utcnow()-json_request[0-i-1]["time"])}
     return jsonify(ret)
 
 
@@ -57,7 +58,7 @@ def last_steps():
     ret = {
         "steps": summary["steps"],
         "distance": distance,
-        "offset": 0,
+        "offset": datetime.utcnow()-summary["time"],
     }
     return jsonify(ret)
 
