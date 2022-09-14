@@ -4,6 +4,7 @@ from flask import Flask, jsonify
 import datetime
 import requests
 
+
 app = Flask(__name__)
 
 myheaders = {
@@ -26,7 +27,7 @@ def last_heartrate():
     ).json()["activities-heart-intraday"]["dataset"]
     ret = {}
     #print(datetime.timedelta(100))
-    ret = {"heart-rate": json_request[- 1]["value"], "time offset":  (datetime.datetime.utcnow()-datetime.datetime.strptime(json_request[-1]["time"], "%H:%M:%S")).seconds/60}
+    ret = {"heart-rate": json_request[- 1]["value"], "time offset":  (datetime.datetime.now()-datetime.datetime.strptime(json_request[-1]["time"], "%H:%M:%S")).seconds/60 - 300}
     return jsonify(ret)
 
 
