@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from flask import Flask, jsonify, request
-from pymongo import MongoClient
+from pymongo import MongoClient, DESCENDING
 import datetime
 import requests
 import time
@@ -10,7 +10,7 @@ import time
 app = Flask(__name__)
 client = MongoClient("mongodb+srv://morgan:testpassword@cluster0.xp2dopa.mongodb.net")
 
-yenv_db = client["env_data_restful"]
+env_db = client["env_data_restful"]
 pose_db = client["pose_data_restful"]
 
 myheaders = {
@@ -90,6 +90,24 @@ def activity_date(date):
         "sedentary": json_request["sedentaryMinutes"],
     }
     return jsonify(ret)
+
+
+@app.route("/sensors/env", methods=["GET"])
+def get_env():
+    a = env_db.posts.find_one(sort=[("timestamp", DESCENDING)])
+    print(a)
+    return jsonify(
+        {"temp": a["temp"], "humidity": a["humidity"], "timestamp": a["timestamp"]}
+    )
+
+
+@app.route("/sensors/pose", methods=["GET"])
+def get_pose():
+    a = pose_db.posts.find_one(sort=[("timestamp", DESCENDING)])
+    print(a["pose"])
+    return jsonify(
+        {"presence": a["presence"], "pose": a["pose"], "timestamp": a["timestamp"]}
+    )
 
 
 @app.route("/post/env", methods=["POST"])
